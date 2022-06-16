@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"//导入mysql驱动
 	"net/http"
 )
 //代办 model
@@ -42,8 +42,11 @@ func main()  {
 	{
 		//查询列表
 		v1Group.GET("/todo", func(c *gin.Context) {
+			var todos []Todo
+			db.Debug().Find(&todos)
 			c.JSON(http.StatusOK,gin.H{
 				"msg" : "list",
+				"TodoList" : todos,
 			})
 		})
 		//查询某一个
@@ -54,8 +57,15 @@ func main()  {
 		})
 		//创建
 		v1Group.POST("/todo", func(c *gin.Context) {
+			var todo Todo
+			_ = c.BindJSON(&todo) //绑定参数
+			//.ShouldBind()强大的功能，它能够基于请求自动提取JSON、form表单和QueryString类型的数据，并把值绑定到指定的结构体对象
+			//_ = c.ShouldBind(&todo)
+			db.Debug().Create(&todo)
+			//todo 如何判断 是否数据库里已经有？？？
 			c.JSON(http.StatusOK,gin.H{
-				"msg" : "create",
+				"msg" : "success",
+				"title": todo.Title,
 			})
 		})
 
