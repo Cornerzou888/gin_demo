@@ -52,11 +52,13 @@ func main()  {
 		//查询列表
 		v1Group.GET("/todo", func(c *gin.Context) {
 			var todos []Todo
-			DB.Debug().Find(&todos)
-			c.JSON(http.StatusOK,gin.H{
-				"msg" : "list",
-				"TodoList" : todos,
-			})
+			err = DB.Debug().Find(&todos).Error
+			if err != nil {
+				c.JSON(http.StatusOK,gin.H{
+					"error" : err.Error(),
+				})
+			}
+			c.JSON(http.StatusOK,todos)
 		})
 		//查询某一个
 		v1Group.GET("/todo/:id", func(c *gin.Context) {
@@ -70,12 +72,18 @@ func main()  {
 			_ = c.BindJSON(&todo) //绑定参数
 			//.ShouldBind()强大的功能，它能够基于请求自动提取JSON、form表单和QueryString类型的数据，并把值绑定到指定的结构体对象
 			//_ = c.ShouldBind(&todo)
-			DB.Debug().Create(&todo)
-			//todo 如何判断 是否数据库里已经有？？？
+			err = DB.Debug().Create(&todo).Error
+			if err != nil{
+				c.JSON(http.StatusOK,gin.H{
+					"error" : err.Error(),
+				})
+			}
+			//todo 如何判断 是否数据库里已经有
 			c.JSON(http.StatusOK,gin.H{
 				"msg" : "success",
-				"title": todo.Title,
+				"data": todo,
 			})
+			//c.JSON(http.StatusOK,todo)
 		})
 
 		//修改
