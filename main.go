@@ -11,7 +11,6 @@ type Todo struct {
 	ID uint `json:"id"`
 	Title string `json:"title" gorm:"unique_index;not null"`
 	Status bool `json:"status"`
-	//IgnoreMe int `gorm:"-"` // 忽略本字段
 }
 
 //初始化
