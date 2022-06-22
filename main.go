@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"//导入mysql驱动
+	_ "github.com/jinzhu/gorm/dialects/mysql" //导入mysql驱动
 	"net/http"
 )
 //代办 model
@@ -11,7 +11,7 @@ type Todo struct {
 	ID uint `json:"id"`
 	Title string `json:"title" gorm:"unique_index;not null"`
 	Status bool `json:"status"`
-	IgnoreMe int `gorm:"-"` // 忽略本字段
+	//IgnoreMe int `gorm:"-"` // 忽略本字段
 }
 
 //初始化
@@ -57,6 +57,7 @@ func main()  {
 				c.JSON(http.StatusOK,gin.H{
 					"error" : err.Error(),
 				})
+				return
 			}
 			c.JSON(http.StatusOK,todos)
 		})
@@ -77,6 +78,7 @@ func main()  {
 				c.JSON(http.StatusOK,gin.H{
 					"error" : err.Error(),
 				})
+				return
 			}
 			//todo 如何判断 是否数据库里已经有
 			c.JSON(http.StatusOK,gin.H{
@@ -88,14 +90,52 @@ func main()  {
 
 		//修改
 		v1Group.PUT("/todo/:id", func(c *gin.Context) {
-			c.JSON(http.StatusOK,gin.H{
-				"msg" : "update",
-			})
+			//id := c.Param("id")
+			id,ok := c.Params.Get("id")
+			if !ok {
+				c.JSON(http.StatusOK,gin.H{
+					"error":"无效的id",
+				})
+				return
+			}
+			var todo Todo
+			err = DB.Where("id=?",id).First(&todo).Error
+			if err != nil {
+				c.JSON(http.StatusOK,gin.H{
+					"error":err.Error(),
+				})
+				return
+			}
+			//fmt.Println(todo)
+			c.BindJSON(&todo)//将json参数绑定到todo 再保存到数据库
+			//fmt.Println(todo)
+			if err = DB.Debug().Save(&todo).Error; err != nil{
+				c.JSON(http.StatusOK,gin.H{
+					"error":err.Error(),
+				})
+				return
+			}
+			c.JSON(http.StatusOK,todo)
 		})
 		//删除
 		v1Group.DELETE("/todo/:id", func(c *gin.Context) {
+			id,ok := c.Params.Get("id")
+			if !ok {
+				c.JSON(http.StatusOK,gin.H{
+					"error":"无效的id",
+				})
+				return
+			}
+			//硬删除
+			err = DB.Where("id=?",id).Delete(&Todo{}).Error
+			if err != nil{
+				c.JSON(http.StatusOK,gin.H{
+					"error":err.Error(),
+				})
+				return
+			}
 			c.JSON(http.StatusOK,gin.H{
-				"msg" : "del",
+				id : "deleted",
 			})
 		})
 
