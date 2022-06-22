@@ -105,7 +105,7 @@
                         xs: 20,
                         span: 12
                     }
-                }, [n("div", {staticClass: "grid-content"}, [n("el-divider", [n("h1", [e._v("bubble清单")])]), n("TodoList")], 1)])], 1)], 1), n("el-footer", [e._v("q1mi出品 Go学习交流QQ群：645090316")])], 1)
+                }, [n("div", {staticClass: "grid-content"}, [n("el-divider", [n("h1", [e._v("bubble清单")])]), n("TodoList")], 1)])], 1)], 1), n("el-footer", [e._v("Go学习交流Cornerzou888@gmail.com")])], 1)
             }, d = [], f = function () {
                 var e = this, t = e.$createElement, n = e._self._c || t;
                 return n("el-card", {staticClass: "box-card"}, [n("el-row", {attrs: {gutter: 20}}, [n("el-col", {

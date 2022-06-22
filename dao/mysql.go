@@ -12,7 +12,7 @@ var (
 //连接数据库
 func InitMysql(env string) (err error){
 	if env == "release" {
-		DB, err = gorm.Open("mysql","root:12345@(localhost:13306)/test?charset=utf8mb4&parseTime=True&loc=Local")
+		DB, err = gorm.Open("mysql","root:123456@(localhost:13306)/test?charset=utf8mb4&parseTime=True&loc=Local")
 	}else{
 		DB, err = gorm.Open("mysql","root:@(localhost:3306)/test?charset=utf8mb4&parseTime=True&loc=Local")
 	}
